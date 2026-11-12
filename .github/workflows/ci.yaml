@@ -54,7 +54,7 @@ jobs:
           cache: "pip"
           cache-dependency-path: requirements-dev.txt
       - run: pip install -r requirements-dev.txt
-      - run: psql "${DATABASE_URL}" -f db/init.sql"
+      - run: psql "${DATABASE_URL}" -f db/init.sql
       - run: pytest -v
 
 
