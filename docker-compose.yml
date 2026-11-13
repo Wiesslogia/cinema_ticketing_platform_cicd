@@ -8,27 +8,37 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro,z
-    ports:
-      - "127.0.0.1:5432:5432"   # dev only (for running tests); remove in the deploy setup
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 10
     restart: unless-stopped
-
   app:
-    build: .
-    image: cinema-api:${APP_VERSION:-dev}
+    image: ghcr.io/wiesslogia/cinema-api:${APP_VERSION:?set APP_VERSION in .env}
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       HOLD_TTL_SECONDS: ${HOLD_TTL_SECONDS:-300}
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - "127.0.0.1:8000:8000"
     restart: unless-stopped
 
+  proxy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./proxy/Caddyfile:/etc/caddy/Caddyfile:ro,z
+      - caddy_data:/data
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+
+    
 volumes:
   pgdata:
+  caddy_data:

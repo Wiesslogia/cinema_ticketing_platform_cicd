@@ -1,0 +1,11 @@
+# Dev-only additions. Compose loads this file automatically on a plain
+# "docker compose up". Deploy with "-f docker-compose.yml" to skip it.
+services:
+  app:
+    ports:
+      - "127.0.0.1:8000:8000"
+    build: .
+    image: cinema-api:dev
+  db:
+    ports:
+      - "127.0.0.1:5432:5432"
