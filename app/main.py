@@ -237,3 +237,7 @@ def cancel_booking(ticket_id: str):
             raise HTTPException(404, "booking not found")
     log.info("booking cancelled", extra={"fields": {"ticket_id": ticket_id}})
     return row
+
+@app.get("/version")
+def version():
+    return {"version": os.environ.get("APP_VERSION", "unknown")}

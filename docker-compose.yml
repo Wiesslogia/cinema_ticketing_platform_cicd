@@ -1,5 +1,11 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 services:
   db:
+    logging: *default-logging
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -16,8 +22,10 @@ services:
       retries: 10
     restart: unless-stopped
   app:
+    logging: *default-logging
     image: ghcr.io/wiesslogia/cinema-api:${APP_VERSION:?set APP_VERSION in .env}
     environment:
+      APP_VERSION: ${APP_VERSION}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       HOLD_TTL_SECONDS: ${HOLD_TTL_SECONDS:-300}
     depends_on:
@@ -26,6 +34,7 @@ services:
     restart: unless-stopped
 
   proxy:
+    logging: *default-logging
     image: caddy:2
     ports:
       - "80:80"
