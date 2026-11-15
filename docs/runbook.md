@@ -24,7 +24,7 @@ First start creates the `pgdata` volume and runs `db/init.sql` (schema and seed 
 | Start again | `C up -d` |
 
 Never use `down -v` on a system with data you need: it deletes the database volume.
-`restart: unless-stopped` restarts crashed containers automatically, but not ones you stopped yourself.
+`restart: unless-stopped` restarts a container whose process dies (measured about 2-3 s), but not one you stopped or killed through Docker (`stop`, `kill`): those stay down until `C up -d`.
 
 ## 3. Logs
 | What | Command |
@@ -61,7 +61,7 @@ Full procedure, verification and measured time: `docs/rollback.md`.
 | health | ready | Meaning | Go to |
 |---|---|---|---|
 | 200 | 200 | Healthy | nothing to do |
-| 200 | 503 | App up, database unreachable | Database down |
+| 200 | 503 or 000 | App up, database unreachable (`/ready` fails, or times out while the pool waits) | Database down |
 | 502 | 502 | Proxy up, app down or unhealthy | App down |
 | 000 | 000 | Proxy unreachable | Proxy down |
 
