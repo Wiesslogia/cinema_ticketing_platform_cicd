@@ -33,7 +33,7 @@ Seed data: 2 shows x 24 seats (rows A-C, seats 1-8), loaded from `db/init.sql` o
 Requirements: Docker Engine 24+ with the Compose plugin. On RHEL-family systems with SELinux enforcing, the compose file already uses `:z` on bind mounts.
 
 ```bash
-git clone <repo URL> cinema-api && cd cinema-api
+git clone "https://github.com/Wiesslogia/cinema_ticketing_platform_cicd.git" cinema-api && cd cinema-api
 cp .env.example .env
 # edit .env: set POSTGRES_PASSWORD (letters and digits only) and APP_VERSION (a 7-char tag, see docs/releases.md)
 docker compose -f docker-compose.yml up -d
